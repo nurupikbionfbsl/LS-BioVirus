@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide Evaluasi Biologi - Materi Virus Kelas X</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .slide-transition {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col">
+
+    <!-- Header Navigation -->
+    <header class="bg-slate-800/90 border-b border-slate-700/80 sticky top-0 z-50 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap justify-between items-center gap-3">
+            <div class="flex items-center space-x-3">
+                <div class="p-2 bg-teal-500/20 text-teal-400 rounded-lg border border-teal-500/30">
+                    <i data-lucide="dna" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-white tracking-wide">Evaluasi Biologi SMA Kelas X</h1>
+                    <p class="text-xs text-slate-400">Materi: Virus (Pertemuan 1, 2, & 3)</p>
+                </div>
+            </div>
+
+            <!-- Filter Pertemuan -->
+            <div class="flex items-center space-x-2 bg-slate-900/60 p-1.5 rounded-xl border border-slate-700">
+                <button onclick="filterMeeting('all')" id="btn-m-all" class="px-3 py-1.5 text-xs font-semibold rounded-lg transition-all bg-teal-600 text-white shadow-sm">
+                    Semua
+                </button>
+                <button onclick="filterMeeting(1)" id="btn-m-1" class="px-3 py-1.5 text-xs font-semibold text-slate-300 hover:text-white rounded-lg transition-all">
+                    Pertemuan 1
+                </button>
+                <button onclick="filterMeeting(2)" id="btn-m-2" class="px-3 py-1.5 text-xs font-semibold text-slate-300 hover:text-white rounded-lg transition-all">
+                    Pertemuan 2
+                </button>
+                <button onclick="filterMeeting(3)" id="btn-m-3" class="px-3 py-1.5 text-xs font-semibold text-slate-300 hover:text-white rounded-lg transition-all">
+                    Pertemuan 3
+                </button>
+            </div>
+
+            <!-- View Switcher -->
+            <div class="flex items-center space-x-2">
+                <button onclick="showScoreSummaryDirectly()" class="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-600/50 rounded-lg transition-all">
+                    <i data-lucide="award" class="w-4 h-4"></i>
+                    <span>Cek Skor</span>
+                </button>
+                <button onclick="toggleMode('slide')" id="mode-slide-btn" class="flex items-center space-x-2 px-3 py-1.5 text-xs font-medium bg-slate-700 text-teal-300 rounded-lg border border-teal-500/30">
+                    <i data-lucide="presentation" class="w-4 h-4"></i>
+                    <span>Mode Slide</span>
+                </button>
+                <button onclick="toggleMode('list')" id="mode-list-btn" class="flex items-center space-x-2 px-3 py-1.5 text-xs font-medium text-slate-400 hover:text-white rounded-lg">
+                    <i data-lucide="list-todo" class="w-4 h-4"></i>
+                    <span>Daftar Soal</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 flex flex-col justify-center">
+
+        <!-- MODE SLIDE PRESENTASI -->
+        <div id="slide-mode" class="flex flex-col space-y-4">
+            
+            <!-- Progress & Stats Bar -->
+            <div class="flex justify-between items-center text-xs text-slate-400 px-1">
+                <div class="flex items-center space-x-2">
+                    <span id="slide-meeting-badge" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                        Pertemuan 1
+                    </span>
+                    <span id="slide-type-badge" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                        Pilihan Ganda
+                    </span>
+                </div>
+                <div class="font-medium tracking-wider">
+                    Soal <span id="current-index-text" class="text-teal-400 font-bold">1</span> dari <span id="total-count-text" class="text-slate-300">45</span>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden border border-slate-700/50">
+                <div id="progress-bar" class="bg-gradient-to-r from-teal-500 to-emerald-400 h-full transition-all duration-300 w-0"></div>
+            </div>
+
+            <!-- Slide Card Container -->
+            <div id="slide-card-container">
+                <!-- Question Card or Result Summary dynamically rendered -->
+            </div>
+
+            <!-- Slide Navigation Bar -->
+            <div class="bg-slate-800/80 border border-slate-700 rounded-xl p-4 flex flex-wrap justify-between items-center gap-3 shadow-lg">
+                <button onclick="toggleAnswer()" id="btn-show-answer" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-teal-300 font-semibold rounded-xl text-xs sm:text-sm flex items-center space-x-2 transition-all border border-teal-500/30">
+                    <i data-lucide="eye" class="w-4 h-4"></i>
+                    <span>Tampilkan Kunci & Pembahasan</span>
+                </button>
+
+                <div class="flex items-center space-x-2">
+                    <button onclick="prevSlide()" id="btn-prev" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-xl text-xs sm:text-sm font-medium flex items-center space-x-1 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+                        <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                        <span>Sebelumnya</span>
+                    </button>
+                    <button onclick="nextSlide()" id="btn-next" class="px-5 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-xl text-xs sm:text-sm font-semibold flex items-center space-x-1 shadow-lg shadow-teal-900/50 transition-all">
+                        <span>Selanjutnya</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Keyboard shortcut hint -->
+            <p class="text-center text-xs text-slate-500">
+                Tip: Gunakan tombol panah <kbd class="px-1.5 py-0.5 bg-slate-800 rounded border border-slate-700 text-slate-400">←</kbd> dan <kbd class="px-1.5 py-0.5 bg-slate-800 rounded border border-slate-700 text-slate-400">→</kbd> di keyboard untuk berpindah slide.
+            </p>
+        </div>
+
+        <!-- MODE DAFTAR SOAL (LIST VIEW) -->
+        <div id="list-mode" class="hidden space-y-6">
+            <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-6">
+                <h2 class="text-xl font-bold text-white mb-2 flex items-center space-x-2">
+                    <i data-lucide="book-open" class="w-6 h-6 text-teal-400"></i>
+                    <span>Daftar Seluruh Soal Evaluasi Biologi</span>
+                </h2>
+                <p class="text-slate-400 text-sm">Menampilkan seluruh instrumen soal berdasarkan filter yang dipilih.</p>
+            </div>
+
+            <div id="list-questions-container" class="space-y-6">
+                <!-- Question Cards Rendered Dynamically -->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 border-t border-slate-800 py-4 text-center text-xs text-slate-500 mt-auto">
+        Evaluasi Pembelajaran Biologi SMA Kelas X - Modul Pembelajaran Virus
+    </footer>
+
+    <script>
+        // Database Soal
+        const questionsData = [
+            // PERTEMUAN 1
+            {
+                id: 1,
+                meeting: 1,
+                topic: "Karakteristik & Struktur Virus",
+                type: "pg",
+                typeName: "Pilihan Ganda",
+                question: "Virus tidak dikategorikan sebagai sel (aseluler) karena tidak memiliki bagian-bagian sel sejati. Alasan utama virus tergolong agen aseluler adalah...",
+                options: [
+                    "A. Tidak memiliki asam nukleat DNA maupun RNA",
+                    "B. Tidak memiliki membran sel, sitoplasma, dan organel sel",
+                    "C. Memiliki ukuran yang lebih besar dari sel bakteri",
+                    "D. Dapat bereplikasi secara mandiri di luar sel inang",
+                    "E. Tidak memiliki kapsid protein pembungkus"
+                ],
+                correct: "B",
+                discussion: "Virus bersifat aseluler karena tidak memiliki kelengkapan struktur sel sejati seperti membran sel, sitoplasma, dan organel sel."
+            },
+            {
+                id: 2,
+                meeting: 1,
+                topic: "Sifat Virus",
+                type: "pg",
+                typeName: "Pilihan Ganda",
+                question: "Perhatikan sifat-sifat virus berikut:\n(1) Dapat dikristalkan\n(2) Memiliki asam nukleat (DNA/RNA)\n(3) Tidak melakukan metabolisme sendiri\n(4) Dapat bereplikasi hanya di dalam sel hidup\n\nSifat virus yang mendukung argumen bahwa virus dianggap sebagai benda mati ditunjukkan oleh nomor...",
+                options: [
+                    "A. (1) dan (2)",
+                    "B. (1) dan (3)",
+                    "C. (2) dan (3)",
+                    "D. (2) dan (4)",
+                    "E. (3) dan (4)"
+                ],
+                correct: "B",
+                discussion: "Dapat dikristalkan dan tidak memiliki sistem metabolisme sendiri merupakan indikator kuat bahwa virus bertindak seperti benda mati saat berada di luar sel inang."
+            },
+            {
+                id: 3,
+                meeting: 1,
+                topic: "Struktur Bakteriofag T4",
+                type: "pg",
+                typeName: "Pilihan Ganda",
+                question: "Bagian struktur tubuh Bakteriofag T4 yang berfungsi untuk menempelkan tubuh virus pada reseptor spesifik permukaan sel bakteri (tahap adsorpsi) adalah...",
+                options: [
+                    "A. Kapsid",
+                    "B. Leher",
+                    "C. Selubung Ekor",
+                    "D. Serabut Ekor",
+                    "E. Asam Nukleat"
+                ],
+                correct: "D",
+                discussion: "Serabut ekor berfungsi secara spesifik untuk mengenali dan menempel pada reseptor sel inang (adsorpsi)."
+            },
+            {
+                id: 4,
+                meeting: 1,
+                topic: "Daur Reproduksi Virus",
+                type: "pg",
+                typeName: "Pilihan Ganda",
+                question: "Perbedaan mendasar antara Siklus Litik dan Siklus Lisogenik pada reproduksi virus adalah...",
+                options: [
+                    "A. Pada siklus litik sel inang hancur/lisis, sedangkan pada siklus lisogenik sel inang tetap hidup dan terbentuk profag",
+                    "B. Siklus litik membutuhkan waktu lebih lama dibanding siklus lisogenik",
+                    "C. Siklus lisogenik selalu diakhiri dengan kematian sel inang secara langsung",
+                    "D. Siklus litik tidak melalui tahap adsorpsi dan penetrasi",
+                    "E. DNA virus pada siklus litik akan menyatu dengan DNA sel inang"
+                ],
+                correct: "A",
+                discussion: "Pada siklus litik sel inang hancur/lisis di akhir tahapan, sedangkan pada siklus lisogenik DNA virus menyatu dengan DNA inang membentuk profag tanpa merusak sel inang secara langsung."
+            },
+            {
+                id: 5,
+                meeting: 1,
+                topic: "Tahapan Daur Litik",
+                type: "pg",
+                typeName: "Pilihan Ganda",
+                question: "Urutan tahapan daur reproduksi virus secara litik yang benar adalah...",
+                options: [
+                    "A. Penetrasi → Adsorpsi → Perakitan → Sintesis → Lisis",
+                    "B. Adsorpsi → Penetrasi → Sintesis/Eklipase → Perakitan → Lisis",
+                    "C. Adsorpsi → Sintesis → Penetrasi → Perakitan → Lisis",
+                    "D. Penetrasi → Sintesis → Adsorpsi → Lisis → Perakitan",
+                    "E. Adsorpsi → Penetrasi → Perakitan → Sintesis → Lisis"
+                ],
+                correct: "B",
+                discussion: "Urutan daur litik yang benar: Adsorpsi (penempelan) → Penetrasi (injeksi gen) → Sintesis/Eklipase (pembentukan komponen) → Perakitan (assembling) → Lisis (pecah)."
+            },
+            {
+                id: 6,
+                meeting: 1,
+                topic: "Ciri Khas Struktur Virus",
+                type: "pgk",
+                typeName: "Pilihan Ganda Kompleks",
+                question: "Manakah dari pernyataan berikut yang merupakan ciri khas struktur dan sifat virus? (Pilih lebih dari satu)",
+                options: [
+                    "Virus dapat hidup dan berkembang biak pada substrat buatan seperti agar-agar nutrisi cair",
+                    "Virus hanya memuat salah satu jenis asam nukleat saja (DNA saja atau RNA saja)",
+                    "Selubung pelindung materi genetik virus tersusun atas protein yang dinamakan kapsid",
+                    "Ukuran virus jauh lebih kecil dibandingkan sel bakteri (mikroskopis/ultramikroskopis)"
+                ],
+                correct: [1, 2, 3], // 0-indexed
+                discussion: "Pernyataan 2, 3, dan 4 benar. Virus tidak dapat tumbuh pada media buatan tanpa sel hidup (parasit obligat)."
+            },
+            {
+                id: 7,
+                meeting: 1,
+                topic: "Struktur & Fungsi Bakteriofag",
+                type: "pgk",
+                typeName: "Pilihan Ganda Kompleks",
+                question: "Perhatikan bagian-bagian Bakteriofag berikut beserta fungsinya! Pasangan yang BENAR adalah... (Pilih lebih dari satu)",
+                options: [
+                    "Kapsid — Melindungi asam nukleat dan memberi bentuk tubuh virus",
+                    "Serabut Ekor — Menyuntikkan asam nukleat ke dalam sel inang",
+                    "Jarum Penusuk (Spike) — Menusuk membran sel inang saat penetrasi",
+                    "Papan Alas (Baseplate) — Tempat melekatnya serabut ekor dan jarum penusuk"
+                ],
+                correct: [0, 2, 3],
+                discussion: "Penyuntikan asam nukleat dilakukan melalui saluran ekor/penetrasi, bukan fungsi utama serabut ekor."
+            },
+            {
+                id: 8,
+                meeting: 1,
+                topic: "Siklus Lisogenik",
+                type: "pgk",
+                typeName: "Pilihan Ganda Kompleks",
+                question: "Manakah peristiwa yang terjadi pada Siklus Lisogenik? (Pilih lebih dari satu)",
+                options: [
+                    "DNA virus bergabung dengan DNA/kromosom bakteri membentuk profag",
+                    "Sel inang langsung pecah (lisis) saat virus berhasil masuk",
+                    "Saat sel bakteri membelah, profag ikut terduplikasi ke sel anak",
+                    "Virus mengontrol penuh mesin sintesis sel inang untuk membentuk partikel baru"
+                ],
+                correct: [0, 2],
+                discussion: "Pada siklus lisogenik terbentuk profag dan profag terduplikasi saat sel inang membelah tanpa lisis."
+            },
+            {
+                id: 9,
+                meeting: 1,
+                topic: "Tahap Sintesis (Eklipase)",
+                type: "pgk",
+                typeName: "Pilihan Ganda Kompleks",
+                question: "Tahap Sintesis (Eklipase) pada daur litik melibatkan proses berikut... (Pilih lebih dari satu)",
+                options: [
+                    "Pembentukan bagian-bagian tubuh virus baru (kapsid, ekor, kepala)",
+                    "Penghancuran DNA sel inang oleh enzim yang dihasilkan virus",
+                    "Penyusunan kompartemen tubuh virus menjadi partikel virus yang utuh",
+                    "Replikasi asam nukleat virus di dalam sel inang"
+                ],
+                correct: [0, 1, 3],
+                discussion: "Penyusunan kompartemen utuh termasuk tahap perakitan (assembling), bukan sintesis."
+            },
+            {
+                id: 10,
+                meeting: 1,
+                topic: "Transisi Lisogenik ke Litik",
+                type: "pgk",
+                typeName: "Pilihan Ganda Kompleks",
+                question: "Faktor yang dapat menyebabkan profag pada siklus lisogenik lepas dan beralih memasuki siklus litik adalah... (Pilih lebih dari satu)",
+                options: [
+                    "Paparan radiasi sinar ultraviolet (UV)",
+                    "Paparan zat kimia berbahaya atau stres lingkungan pada sel inang",
+                    "Penurunan ketahanan sel inang",
+                    "Bertambah banyaknya nutrisi di dalam sel bakteri"
+                ],
+                correct: [0, 1, 2],
+                discussion: "Radiasi UV, zat kimia, serta penurunan daya tahan sel inang memicu terlepasnya profag menuju siklus litik."
+            },
+            {
+                id: 11,
+                meeting: 1,
+                topic: "Karakteristik Parasit Obligat",
+                type: "bs",
+                typeName: "Benar / Salah",
+                question: "( B / S ) Virus tergolong parasit obligat intraseluler karena hanya dapat bereplikasi jika berada di dalam sel hidup yang menjadi inangnya.",
+                correct: "BENAR",
+                discussion: "BENAR. Virus tidak dapat bereplikasi atau bereproduksi mandiri di luar sel hidup."
+            },
+            {
+                id: 12,
+                meeting: 1,
+                topic: "Asam Nukleat Virus",
+                type: "bs",
+                typeName: "Benar / Salah",
+                question: "( B / S ) Asam nukleat pada tubuh virus terdiri dari DNA dan RNA yang berada secara bersamaan di dalam satu kapsid.",
+                correct: "SALAH",
+                discussion: "SALAH. Virus hanya mengandung salah satu jenis asam nukleat saja (DNA saja ATAU RNA saja)."
+            },
+            {
+                id: 13,
+                meeting: 1,
+                topic: "Tahap Adsorpsi",
+                type: "bs",
+                typeName: "Benar / Salah",
+                question: "( B / S ) Pada tahap adsorpsi, serabut ekor virus menempel pada dinding sel atau membran sel inang yang memiliki reseptor spesifik.",
+                correct: "BENAR",
+                discussion: "BENAR. Adsorpsi terjadi karena adanya kecocokan antara protein ekor virus dan reseptor sel inang."
+            },
+            {
+                id: 14,
+                meeting: 1,
+                topic: "Dampak Lisogenik pada Sel Inang",
+                type: "bs",
+                typeName: "Benar / Salah",
+                question: "( B / S ) Sel inang pada siklus lisogenik akan langsung mati dan pecah setelah proses penetrasi DNA virus selesai.",
+                correct: "SALAH",
+                discussion: "SALAH. Pada siklus lisogenik sel inang tetap hidup dan bereplikasi bersama profag."
+            },
+            {
+                id: 15,
+                meeting: 1,
+                topic: "Pembentukan Profag",
+                type: "bs",
+                typeName: "Benar / Salah",
+                question: "( B / S ) Pembentukan profag merupakan ciri khas yang hanya ditemukan pada daur litik.",
+                correct: "SALAH",
+                discussion: "SALAH. Profag merupakan hasil penggabungan materi genetik virus dan sel inang pada daur LISOGENIK."
+            },
+
+            // PERTEMUAN 2
+            {
+                id: 16,
+                meeting: 2,
+                topic: "Pemanfaatan Virus",
+                type: "pg",
+                typeName: "Pilihan Ganda",
+                question: "Virus tidak selalu merugikan. Salah satu pemanfaatan virus yang menguntungkan dalam bidang medis dan rekayasa genetika adalah...",
+                options: [
+                    "A. Penggunaan Tobacco Mosaic Virus sebagai pupuk organik tanaman",
+                    "B. Penggunaan Adenovirus sebagai vektor pembawa gen dalam pembuatan vaksin",
+                    "C. Penggunaan virus Dengue untuk meningkatkan daya tahan tubuh manusia",
+                    "D. Penggunaan New Castle Disease Virus untuk menyuburkan hewan ternak",
+                    "E. Penggunaan virus influenza untuk membunuh sel kanker"
+                ],
+                correct: "B",
+                discussion: "Adenovirus umum dimanfaatkan sebagai vektor rekayasa genetik untuk membawa materi genetik vaksin ke sel target."
+            },
+            {
+                id: 21,
+                meeting: 2,
+                topic: "Peranan & Dampak Virus",
+                type: "pg",
+                typeName: "Pilihan Ganda",
+                question: "Pasangan antara jenis virus, sasaran infeksi, dan penyakit/dampak yang ditimbulkan berikut yang paling tepat adalah...",
+                options: [
+                    "A. HIV — Menyerang sel darah merah — Demam Berdarah",
+                    "B. TMV — Menyerang daun tembakau — Bercak kekuningan pada daun",
+                    "C. NDV — Menyerang saraf manusia — Rabies",
+                    "D. Virus Dengue — Menyerang sel limfosit T — AIDS",
+                    "E. Tungro — Menyerang unggas — Kematian mendadak"
+                ],
+                correct: "B",
+                discussion: "Tobacco Mosaic Virus (TMV) menyerang daun tanaman tembakau dan menimbulkan bercak kekuningan."
+            },
+            {
+                id: 22,
+                meeting: 2,
+                topic: "Penyakit Hewan Ternak",
+                type: "pg",
+                typeName: "Pilihan Ganda",
+                question: "Peternak ayam resah karena unggas peliharaannya mengalami gejala kejang-kejang, kepala terbalik (leher berputar), serta kotoran berwarna hijau. Penyakit ini dikenal sebagai Tetelo yang disebabkan oleh infeksi...",
+                options: [
+                    "A. Rhabdovirus",
+                    "B. Foot and Mouth Disease Virus (FMDV)",
+                    "C. New Castle Disease Virus (NDV)",
+                    "D. Rous Sarcoma Virus (RSV)",
+                    "E. Citrus Vein Phloem Degeneration (CVPD)"
+                ],
+                correct: "C",
+                discussion: "Penyakit Tetelo pada unggas disebabkan oleh infeksi New Castle Disease Virus (NDV)."
+            },
+            {
+                id: 23,
+                meeting: 2,
+                topic: "Aplikasi Terapi Fag",
+                type: "pg",
+                typeName: "Pilihan Ganda",
+                question: "Bakteriofag dapat dimanfaatkan dalam dunia kedokteran sebagai alternatif pengobatan infeksi bakteri yang sudah resisten terhadap antibiotik. Terapi ini dikenal dengan istilah...",
+                options: [
+                    "A. Terapi Gen",
+                    "B. Terapi Fag (Phage Therapy)",
+                    "C. Kemoterapi",
+                    "D. Vaksinasi RNA",
+                    "E. Bioremediasi"
+                ],
+                correct: "B",
+                discussion: "Penggunaan Bakteriofag untuk membunuh bakteri patogen dinamakan Terapi Fag (Phage Therapy)."
+            },
+            {
+                id: 24,
+                meeting: 2,
+                topic: "Patogenitas HIV",
+                type: "pg",
+                typeName: "Pilihan Ganda",
+                question: "Virus HIV sangat berbahaya bagi tubuh manusia karena menyerang sistem kekebalan tubuh, secara spesifik menginfeksi sel...",
+                options: [
+                    "A. Eritrosit (Sel Darah Merah)",
+                    "B. Trombosit (Keping Darah)",
+                    "C. Sel Limfosit T (CD4+)",
+                    "D. Sel Saraf Pusat",
+                    "E. Sel epitel paru-paru"
+                ],
+                correct: "C",
+                discussion: "HIV secara spesifik menginfeksi dan merusak sel limfosit T CD4+ yang berperan vital dalam sistem kekebalan tubuh."
+            },
+            {
+                id: 25,
+                meeting: 2,
+                topic: "Virus Tumbuhan",
+                type: "pgk",
+                typeName: "Pilihan Ganda Kompleks",
+                question: "Manakah dari virus-virus berikut yang menginfeksi dan menyebabkan penyakit pada tumbuhan? (Pilih lebih dari satu)",
+                options: [
+                    "Tobacco Mosaic Virus (TMV)",
+                    "Citrus Vein Phloem Degeneration (CVPD)",
+                    "Virus Tungro",
+                    "Rhabdovirus"
+                ],
+                correct: [0, 1, 2],
+                discussion: "TMV, CVPD, dan Tungro menyerang tumbuhan. Rhabdovirus menyerang hewan/manusia (rabies)."
+            },
+            {
+                id: 26,
+                meeting: 2,
+                topic: "Manfaat Virus bagi Manusia",
+                type: "pgk",
+                typeName: "Pilihan Ganda Kompleks",
+                question: "Berikut merupakan pemanfaatan virus yang menguntungkan bagi kehidupan manusia... (Pilih lebih dari satu)",
+                options: [
+                    "Vektor dalam teknologi rekayasa genetika dan terapi gen",
+                    "Bahan pembuatan antitoksin dan vaksin",
+                    "Agen biokontrol (terapi fag) untuk membasmi bakteri patogen",
+                    "Bioindikator pencemaran air bersih"
+                ],
+                correct: [0, 1, 2],
+                discussion: "Pernyataan 1, 2, dan 3 adalah manfaat nyata virus. Virus bukan indikator pencemaran air bersih."
+            },
+            {
+                id: 27,
+                meeting: 2,
+                topic: "Penyakit Hewan Akibat Virus",
+                type: "pgk",
+                typeName: "Pilihan Ganda Kompleks",
+                question: "Manakah penyakit pada hewan ternak yang disebabkan oleh infeksi virus? (Pilih lebih dari satu)",
+                options: [
+                    "Penyakit Mulut dan Kuku (PMK / FMD) pada sapi dan kambing",
+                    "Tetelo / New Castle Disease (ND) pada ayam",
+                    "Rabies pada anjing dan kera",
+                    "Anthrax pada sapi"
+                ],
+                correct: [0, 1, 2],
+                discussion: "PMK, Tetelo, dan Rabies disebabkan oleh virus. Anthrax disebabkan oleh bakteri Bacillus anthracis."
+            },
+            {
+                id: 28,
+                meeting: 2,
+                topic: "Infeksi HIV / AIDS",
+                type: "pgk",
+                typeName: "Pilihan Ganda Kompleks",
+                question: "Pernyataan yang BENAR mengenai Human Immunodeficiency Virus (HIV) dan AIDS adalah... (Pilih lebih dari satu)",
+                options: [
+                    "HIV menyerang sel imunitas CD4+ sehingga penderita rentan terhadap penyakit infeksi sekunder",
+                    "AIDS adalah kumpulan gejala penurunan sistem kekebalan tubuh akibat infeksi HIV",
+                    "HIV dapat menular dengan mudah melalui udara dan bersentuhan tangan",
+                    "Penularan HIV terjadi melalui kontak cairan tubuh seperti darah, jarum suntik tidak steril, dan hubungan seksual"
+                ],
+                correct: [0, 1, 3],
+                discussion: "HIV TIDAK menular melalui udara atau kontak fisik biasa (seperti bersalaman)."
+            },
+            {
+                id: 29,
+                meeting: 2,
+                topic: "Jenis Materi Genetik Virus",
+                type: "pgk",
+                typeName: "Pilihan Ganda Kompleks",
+                question: "Manakah kelompok virus yang memiliki materi genetik berupa RNA? (Pilih lebih dari satu)",
+                options: [
+                    "Human Immunodeficiency Virus (HIV)",
+                    "Influenza virus",
+                    "SARS-CoV-2",
+                    "Bakteriofag T4"
+                ],
+                correct: [0, 1, 2],
+                discussion: "HIV, Influenza, dan SARS-CoV-2 bermateri genetik RNA. Bakteriofag T4 bermateri genetik DNA."
+            },
+            {
+                id: 30,
+                meeting: 2,
+                topic: "Vektor Vaksin Adenovirus",
+                type: "bs",
+                typeName: "Benar / Salah",
+                question: "( B / S ) Adenovirus merupakan jenis virus yang sering dimanfaatkan sebagai vektor pengantar materi genetik dalam pengembangan vaksin berbasis rekombinan.",
+                correct: "BENAR",
+                discussion: "BENAR. Adenovirus merupakan vektor pembawa gen yang umum digunakan dalam teknologi vaksin."
+            },
+            {
+                id: 31,
+                meeting: 2,
+                topic: "Penyakit Tungro Padi",
+                type: "bs",
+                typeName: "Benar / Salah",
+                question: "( B / S ) Penyakit Tungro pada tanaman padi menyebabkan daun berubah warna menjadi kuning kecokelatan dan pertumbuhan tanaman menjadi kerdil.",
+                correct: "BENAR",
+                discussion: "BENAR. Virus Tungro yang ditularkan wereng hijau menyebabkan kerdil dan daun kuning/cokelat."
+            },
+            {
+                id: 32,
+                meeting: 2,
+                topic: "Penyakit Rabies",
+                type: "bs",
+                typeName: "Benar / Salah",
+                question: "( B / S ) Penyakit Rabies menyerang sistem saraf pusat pada mamalia dan dapat ditularkan ke manusia melalui gigitan hewan terinfeksi.",
+                correct: "BENAR",
+                discussion: "BENAR. Rhabdovirus penyebab rabies menyerang sistem saraf pusat dan ditularkan via gigitan hewan terinfeksi."
+            },
+            {
+                id: 33,
+                meeting: 2,
+                topic: "Definisi Terapi Fag",
+                type: "bs",
+                typeName: "Benar / Salah",
+                question: "( B / S ) Terapi Fag merupakan pengobatan penyakit virus dengan cara menyuntikkan virus hidup jenis lain ke dalam tubuh penderita.",
+                correct: "SALAH",
+                discussion: "SALAH. Terapi Fag memanfaatkan bakteriofag untuk membasmi infeksi bakteri patogen, bukan penyakit virus."
+            },
+            {
+                id: 34,
+                meeting: 2,
+                topic: "Transmisi Virus Dengue",
+                type: "bs",
+                typeName: "Benar / Salah",
+                question: "( B / S ) Virus Dengue ditularkan langsung dari manusia ke manusia melalui percikan liur (droplet) saat bersin.",
+                correct: "SALAH",
+                discussion: "SALAH. Virus Dengue ditularkan melalui gigitan vektor nyamuk Aedes aegypti, bukan droplet kontak langsung."
+            },
+
+            // PERTEMUAN 3
+            {
+                id: 35,
+                meeting: 3,
+                topic: "Studi Kasus DBD & Fogging",
+                type: "pg",
+                typeName: "Pilihan Ganda",
+                question: "Saat terjadi lonjakan kasus Demam Berdarah Dengue (DBD) di suatu pemukiman, warga berbondong-bondong meminta tindakan fogging (pengasapan). Namun, pakar kesehatan menyatakan fogging saja tidak cukup untuk menghentikan wabah karena...",
+                options: [
+                    "A. Fogging membunuh jentik nyamuk tetapi tidak membunuh nyamuk dewasa",
+                    "B. Fogging hanya membunuh nyamuk dewasa dan tidak membasmi jentik nyamuk serta tidak mematikan virusnya langsung",
+                    "C. Fogging membuat virus Dengue bermutasi menjadi lebih ganas",
+                    "D. Fogging hanya dapat dilakukan pada malam hari",
+                    "E. Fogging membunuh semua jenis bakteri di udara"
+                ],
+                correct: "B",
+                discussion: "Fogging hanya membunuh nyamuk dewasa, tidak membasmi jentik di penampungan air dan tidak membunuh virusnya langsung."
+            },
+            {
+                id: 36,
+                meeting: 3,
+                topic: "Mekanisme Kerja Vaksin",
+                type: "pg",
+                typeName: "Pilihan Ganda",
+                question: "Mekanisme kerja utama dari vaksinasi dalam mencegah infeksi virus di dalam tubuh adalah...",
+                options: [
+                    "A. Membunuh secara langsung seluruh virus yang telah masuk ke dalam jaringan tubuh",
+                    "B. Merangsang sistem kekebalan tubuh untuk membentuk antibodi spesifik dan sel memori tanpa menimbulkan penyakit berat",
+                    "C. Menyerap racun yang dihasilkan oleh virus di dalam aliran darah",
+                    "D. Mengubah struktur sel tubuh agar tidak dapat disentuh oleh virus",
+                    "E. Menghancurkan dinding sel inang sehingga virus tidak memiliki tempat hidup"
+                ],
+                correct: "B",
+                discussion: "Vaksinasi merangsang pembentukan antibodi spesifik dan sel memori imunitas tanpa menimbulkan penyakit parah."
+            },
+            {
+                id: 37,
+                meeting: 3,
+                topic: "Penggunaan Antibiotik",
+                type: "pg",
+                typeName: "Pilihan Ganda",
+                question: "Seorang pasien berobat ke dokter karena mengalami gejala demam, batuk, dan pilek akibat infeksi virus Influenza. Pasien meminta dokter memberikan obat antibiotik. Tindakan dokter yang tepat beserta alasannya adalah...",
+                options: [
+                    "A. Memberikan antibiotik dosis tinggi agar virus cepat mati",
+                    "B. Menolak memberikan antibiotik karena antibiotik hanya efektif membunuh bakteri, bukan virus",
+                    "C. Memberikan antibiotik untuk merangsang pembentukan antibodi tubuh",
+                    "D. Memberikan antibiotik agar virus tidak melakukan pembelahan biner",
+                    "E. Menolak memberikan antibiotik karena antibiotik hanya diperuntukkan bagi penyakit jamur"
+                ],
+                correct: "B",
+                discussion: "Antibiotik bekerja pada struktur target bakteri (seperti dinding sel). Virus tidak memiliki struktur sel sehingga antibiotik tidak efektif."
+            },
+            {
+                id: 38,
+                meeting: 3,
+                topic: "Pengendalian Vektor PSN 3M",
+                type: "pg",
+                typeName: "Pilihan Ganda",
+                question: "Langkah pengendalian vektor nyamuk Aedes aegypti yang paling efektif dan ramah lingkungan melalui program PSN 3M Plus adalah...",
+                options: [
+                    "A. Menguras tempat penampungan air, menutup rapat wadah air, dan mendaur ulang barang bekas yang menampung air",
+                    "B. Membakar seluruh sampah plastik dan menggunakan obat nyamuk semprot setiap jam",
+                    "C. Mengeringkan seluruh sungai dan danau di sekitar pemukiman warga",
+                    "D. Meminum obat antivirus secara rutin setiap minggu pada musim hujan",
+                    "E. Menutup seluruh jendela rumah sepanjang hari agar nyamuk tidak masuk"
+                ],
+                correct: "A",
+                discussion: "PSN 3M mencakup Menguras tempat penampungan air, Menutup wadah air, dan Mendaur ulang barang bekas penyimpan air."
+            },
+            {
+                id: 39,
+                meeting: 3,
+                topic: "Protokol Kesehatan & Sabun",
+                type: "pg",
+                typeName: "Pilihan Ganda",
+                question: "Penerapan Protokol Kesehatan (seperti memakai masker, mencuci tangan dengan sabun, dan menjaga jarak) sangat efektif menurunkan angka penularan virus Influenza dan SARS-CoV-2 karena...",
+                options: [
+                    "A. Sabun dapat menghancurkan lapisan membran/kapsid lipid virus dan masker menahan droplet penularan",
+                    "B. Sabun memberikan zat gizi yang menguatkan sel epitel kulit dari serangan virus",
+                    "C. Masker mampu membunuh virus dengan suhu panas pernapasan",
+                    "D. Menjaga jarak mematikan daya replikasi virus di udara terbuka",
+                    "E. Sabun merangsang pembentukan eritrosit secara cepat"
+                ],
+                correct: "A",
+                discussion: "Molekul sabun merusak selubung lipid (envelope) virus, sementara masker secara fisik menahan percikan droplet."
+            },
+            {
+                id: 40,
+                meeting: 3,
+                topic: "Pencegahan Medis & Biologis",
+                type: "pgk",
+                typeName: "Pilihan Ganda Kompleks",
+                question: "Manakah dari tindakan berikut yang tergolong ke dalam upaya pencegahan medis dan biologis terhadap serangan infeksi virus? (Pilih lebih dari satu)",
+                options: [
+                    "Pemberian vaksinasi sesuai jadwal",
+                    "Pemberian imunisasi booster",
+                    "Pemanfaatan ikan pemakan jentik (ikan cupang) di kolam air",
+                    "Menimbun kaleng bekas di pekarangan rumah"
+                ],
+                correct: [0, 1, 2],
+                discussion: "Vaksinasi dan booster (pencegahan medis), pemanfaatan ikan pemakan jentik (pengendalian biologis)."
+            },
+            {
+                id: 41,
+                meeting: 3,
+                topic: "Mekanisme Cuci Tangan",
+                type: "pgk",
+                typeName: "Pilihan Ganda Kompleks",
+                question: "Mengapa kebiasaan Pola Hidup Bersih dan Sehat (PHBS) seperti mencuci tangan menggunakan sabun dan air mengalir efektif mencegah infeksi virus bercangkang lipid (seperti Corona dan Influenza)? (Pilih lebih dari satu)",
+                options: [
+                    "Molekul sabun dapat merusak lapisan selubung lipid (envelope) pelindung virus",
+                    "Gesekan saat mencuci tangan membantu meluruhkan partikel virus dari permukaan kulit",
+                    "Air mengalir membilas partikel virus yang terlepas sehingga hilang dari tangan",
+                    "Sabun mengandung bahan antibiotik alami pembunuh virus"
+                ],
+                correct: [0, 1, 2],
+                discussion: "Pernyataan 1, 2, dan 3 adalah prinsip fisik dan kimia kerja sabun dan air mengalir dalam meluruhkan virus."
+            },
+            {
+                id: 42,
+                meeting: 3,
+                topic: "Faktor Lonjakan Kasus DBD",
+                type: "pgk",
+                typeName: "Pilihan Ganda Kompleks",
+                question: "Berikut merupakan alasan mengapa wabah Demam Berdarah Dengue (DBD) sering mengalami lonjakan kasus pada awal musim hujan... (Pilih lebih dari satu)",
+                options: [
+                    "Banyak timbulan genangan air bersih pada wadah terbuka yang menjadi tempat berkembang biak nyamuk Aedes aegypti",
+                    "Suhu dan kelembapan udara saat musim hujan mendukung masa inkubasi nyamuk",
+                    "Virus Dengue dapat berkembang biak dengan cepat di dalam air hujan yang tergenang",
+                    "Kurangnya kesadaran masyarakat dalam membersihkan sarang nyamuk secara rutin"
+                ],
+                correct: [0, 1, 3],
+                discussion: "Virus Dengue bereplikasi di dalam sel tubuh inang (nyamuk/manusia), BUKAN di dalam genangan air hujan."
+            },
+            {
+                id: 43,
+                meeting: 3,
+                topic: "Tindakan Penanganan Infeksi",
+                type: "pgk",
+                typeName: "Pilihan Ganda Kompleks",
+                question: "Tindakan yang TIDAK TEPAT saat menghadapi anggota keluarga yang terkonfirmasi mengalami infeksi virus menular (seperti Flu/COVID-19) adalah... (Pilih lebih dari satu)",
+                options: [
+                    "Mengisolasi penderita di kamar terpisah dengan sirkulasi udara yang baik",
+                    "Memberikan obat antibiotik secara bebas tanpa resep dokter",
+                    "Membiarkan penderita beraktivitas normal di keramaian tanpa masker",
+                    "Memastikan penderita cukup istirahat, minum air putih, dan mengonsumsi makanan bergizi"
+                ],
+                correct: [1, 2],
+                discussion: "Memberikan antibiotik secara bebas dan membiarkan beraktivitas tanpa masker adalah tindakan SALAH / TIDAK TEPAT."
+            },
+            {
+                id: 44,
+                meeting: 3,
+                topic: "Program PSN 3M Plus",
+                type: "pgk",
+                typeName: "Pilihan Ganda Kompleks",
+                question: "Manakah yang termasuk kegiatan \"Plus\" dalam gerakan PSN 3M Plus untuk mencegah DBD? (Pilih lebih dari satu)",
+                options: [
+                    "Menaburkan bubuk larvasida (abate) pada tempat penampungan air yang sulit dibersihkan",
+                    "Memelihara ikan pemakan jentik nyamuk",
+                    "Menanam tanaman pengusir nyamuk seperti serai atau lavender",
+                    "Menggunakan lotion anti nyamuk saat beraktivitas"
+                ],
+                correct: [0, 1, 2, 3],
+                discussion: "Keempat poin tersebut merupakan bentuk-bentuk tindakan 'Plus' pendukung gerakan 3M."
+            },
+            {
+                id: 45,
+                meeting: 3,
+                topic: "Pencegahan DBD & Efektifitas",
+                type: "bs",
+                typeName: "Benar / Salah",
+                question: "( B / S ) Pemberian antibiotik kepada penderita DBD bertujuan untuk membunuh Virus Dengue yang beredar di dalam darah.",
+                correct: "SALAH",
+                discussion: "SALAH. DBD disebabkan oleh virus Dengue. Antibiotik tidak membunuh virus."
+            },
+            {
+                id: 46,
+                meeting: 3,
+                topic: "Tujuan Gerakan 3M",
+                type: "bs",
+                typeName: "Benar / Salah",
+                question: "( B / S ) Gerakan 3M (Menguras, Menutup, Mendaur ulang) berfokus pada pemutusan rantai hidup nyamuk Aedes aegypti pada fase jentik/larva.",
+                correct: "BENAR",
+                discussion: "BENAR. 3M memutus perkembangbiakan nyamuk sejak fase larva/jentik."
+            },
+            {
+                id: 47,
+                meeting: 3,
+                topic: "Karakteristik Vaksinasi",
+                type: "bs",
+                typeName: "Benar / Salah",
+                question: "( B / S ) Vaksinasi memberikan perlindungan imun pasif jangka pendek tanpa merangsang pembentukan sel memori imunitas.",
+                correct: "SALAH",
+                discussion: "SALAH. Vaksinasi memberikan imunitas AKTIF dan merangsang pembentukan sel memori kekebalan tubuh."
+            },
+            {
+                id: 48,
+                meeting: 3,
+                topic: "Tindakan Isolasi Mandiri",
+                type: "bs",
+                typeName: "Benar / Salah",
+                question: "( B / S ) Melakukan isolasi mandiri bagi individu yang terinfeksi virus menular merupakan bentuk tindakan preventif untuk melindungi masyarakat di sekitarnya.",
+                correct: "BENAR",
+                discussion: "BENAR. Isolasi mandiri mencegah rantai penularan virus ke anggota keluarga dan masyarakat."
+            },
+            {
+                id: 49,
+                meeting: 3,
+                topic: "Transmisi Virus Dengue",
+                type: "bs",
+                typeName: "Benar / Salah",
+                question: "( B / S ) Virus Dengue dapat menular secara langsung antarmanusia melalui jabat tangan atau penggunaan alat makan bersama.",
+                correct: "SALAH",
+                discussion: "SALAH. Virus Dengue hanya ditularkan melalui gigitan nyamuk Aedes aegypti terinfeksi."
+            }
+        ];
+
+        let currentFilteredQuestions = [...questionsData];
+        let currentIndex = 0;
+        let activeMeetingFilter = 'all';
+        let isAnswerVisible = false;
+        let userAnswers = {}; // Object to track user choices per question id
+
+        function calculateResults() {
+            let total = currentFilteredQuestions.length;
+            let correctCount = 0;
+            let incorrectCount = 0;
+            let unansweredCount = 0;
+
+            let meetingStats = { 
+                1: { correct: 0, total: 0 }, 
+                2: { correct: 0, total: 0 }, 
+                3: { correct: 0, total: 0 } 
+            };
+
+            currentFilteredQuestions.forEach(q => {
+                const uAns = userAnswers[q.id];
+                let isCorrect = false;
+
+                if (meetingStats[q.meeting]) {
+                    meetingStats[q.meeting].total++;
+                }
+
+                if (uAns === undefined || uAns === null || (Array.isArray(uAns) && uAns.length === 0)) {
+                    unansweredCount++;
+                } else {
+                    if (q.type === 'pg') {
+                        const selectedOptLetter = q.options[uAns]?.trim().charAt(0);
+                        if (selectedOptLetter === q.correct.trim()) {
+                            isCorrect = true;
+                        }
+                    } else if (q.type === 'pgk') {
+                        const userArr = [...uAns].sort();
+                        const correctArr = [...q.correct].sort();
+                        if (userArr.length === correctArr.length && userArr.every((val, idx) => val === correctArr[idx])) {
+                            isCorrect = true;
+                        }
+                    } else if (q.type === 'bs') {
+                        if (uAns === q.correct) {
+                            isCorrect = true;
+                        }
+                    }
+
+                    if (isCorrect) {
+                        correctCount++;
+                        if (meetingStats[q.meeting]) meetingStats[q.meeting].correct++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            });
+
+            const score = total > 0 ? Math.round((correctCount / total) * 100) : 0;
+            return { total, correctCount, incorrectCount, unansweredCount, score, meetingStats };
+        }
+
+        function restartEvaluation() {
+            userAnswers = {};
+            currentIndex = 0;
+            isAnswerVisible = false;
+            renderSlide();
+        }
+
+        function showScoreSummaryDirectly() {
+            currentIndex = currentFilteredQuestions.length;
+            renderSlide();
+        }
+
+        function renderSlide() {
+            if (currentFilteredQuestions.length === 0) return;
+
+            const cardContainer = document.getElementById('slide-card-container');
+            const btnShowAnswer = document.getElementById('btn-show-answer');
+            const btnPrev = document.getElementById('btn-prev');
+            const btnNext = document.getElementById('btn-next');
+
+            // CASE: END OF SLIDES -> SHOW SCORE SUMMARY SCREEN
+            if (currentIndex >= currentFilteredQuestions.length) {
+                const stats = calculateResults();
+
+                document.getElementById('slide-meeting-badge').innerText = `Hasil Evaluasi`;
+                document.getElementById('slide-type-badge').innerText = `Ringkasan Nilai`;
+                document.getElementById('current-index-text').innerText = `Selesai`;
+                document.getElementById('total-count-text').innerText = stats.total;
+                document.getElementById('progress-bar').style.width = `100%`;
+
+                let gradeColor = "text-emerald-400";
+                let badgeBg = "bg-emerald-500/10 border-emerald-500/30 text-emerald-300";
+                let gradeMsg = "Sangat Memuaskan! Anda telah menguasai materi Virus dengan baik.";
+
+                if (stats.score < 60) {
+                    gradeColor = "text-rose-400";
+                    badgeBg = "bg-rose-500/10 border-rose-500/30 text-rose-300";
+                    gradeMsg = "Perlu Belajar Lagi. Pelajari kembali pembahasan di setiap slide soal.";
+                } else if (stats.score < 80) {
+                    gradeColor = "text-amber-400";
+                    badgeBg = "bg-amber-500/10 border-amber-500/30 text-amber-300";
+                    gradeMsg = "Cukup Baik! Tingkatkan lagi pemahaman pada bagian yang belum tepat.";
+                }
+
+                let meetingBreakdownHtml = '';
+                if (activeMeetingFilter === 'all') {
+                    meetingBreakdownHtml = `
+                        <div class="mt-4 pt-4 border-t border-slate-700/80">
+                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Rincian Per Pertemuan:</h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700 text-center">
+                                    <div class="text-xs text-slate-400">Pertemuan 1</div>
+                                    <div class="text-lg font-bold text-teal-300">${stats.meetingStats[1].correct} / ${stats.meetingStats[1].total}</div>
+                                </div>
+                                <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700 text-center">
+                                    <div class="text-xs text-slate-400">Pertemuan 2</div>
+                                    <div class="text-lg font-bold text-teal-300">${stats.meetingStats[2].correct} / ${stats.meetingStats[2].total}</div>
+                                </div>
+                                <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700 text-center">
+                                    <div class="text-xs text-slate-400">Pertemuan 3</div>
+                                    <div class="text-lg font-bold text-teal-300">${stats.meetingStats[3].correct} / ${stats.meetingStats[3].total}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                cardContainer.innerHTML = `
+                    <div class="bg-slate-800/90 border border-slate-700 rounded-2xl p-6 sm:p-8 shadow-2xl backdrop-blur-sm flex flex-col justify-between relative animate-fadeIn space-y-6">
+                        <div class="text-center space-y-2">
+                            <div class="inline-flex p-3 rounded-2xl bg-teal-500/10 border border-teal-500/20 text-teal-400 mb-2">
+                                <i data-lucide="award" class="w-10 h-10"></i>
+                            </div>
+                            <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-wide">Hasil Evaluasi Pembelajaran</h2>
+                            <p class="text-xs sm:text-sm text-slate-400">Materi Biologi: Virus Kelas X</p>
+                        </div>
+
+                        <!-- Score Display -->
+                        <div class="flex flex-col items-center justify-center py-4 bg-slate-900/80 rounded-2xl border border-slate-700/80 shadow-inner">
+                            <div class="text-5xl sm:text-6xl font-black ${gradeColor} tracking-tight">${stats.score}</div>
+                            <div class="text-xs font-semibold text-slate-400 mt-1 uppercase tracking-widest">Skor Akhir (Skala 100)</div>
+                            <div class="mt-3 px-3 py-1 rounded-full text-xs font-semibold border ${badgeBg}">${gradeMsg}</div>
+                        </div>
+
+                        <!-- Detail Statistics -->
+                        <div class="grid grid-cols-3 gap-3">
+                            <div class="bg-emerald-950/40 border border-emerald-500/40 p-3.5 rounded-xl text-center">
+                                <div class="text-xl sm:text-2xl font-bold text-emerald-400">${stats.correctCount}</div>
+                                <div class="text-xs font-medium text-emerald-200/80 mt-1">Benar</div>
+                            </div>
+                            <div class="bg-rose-950/40 border border-rose-500/40 p-3.5 rounded-xl text-center">
+                                <div class="text-xl sm:text-2xl font-bold text-rose-400">${stats.incorrectCount}</div>
+                                <div class="text-xs font-medium text-rose-200/80 mt-1">Salah</div>
+                            </div>
+                            <div class="bg-amber-950/40 border border-amber-500/40 p-3.5 rounded-xl text-center">
+                                <div class="text-xl sm:text-2xl font-bold text-amber-400">${stats.unansweredCount}</div>
+                                <div class="text-xs font-medium text-amber-200/80 mt-1">Kosong</div>
+                            </div>
+                        </div>
+
+                        ${meetingBreakdownHtml}
+
+                        <!-- Action Buttons -->
+                        <div class="flex flex-wrap justify-center gap-3 pt-2">
+                            <button onclick="restartEvaluation()" class="px-5 py-2.5 bg-teal-600 hover:bg-teal-500 text-white rounded-xl text-xs sm:text-sm font-semibold flex items-center space-x-2 shadow-lg shadow-teal-900/50 transition-all">
+                                <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                                <span>Ulangi Latihan</span>
+                            </button>
+                            <button onclick="currentIndex = 0; renderSlide();" class="px-5 py-2.5 bg-slate-700 hover:bg-slate-600 text-teal-300 rounded-xl text-xs sm:text-sm font-semibold flex items-center space-x-2 border border-teal-500/30 transition-all">
+                                <i data-lucide="book-open" class="w-4 h-4"></i>
+                                <span>Tinjau Pembahasan Soal</span>
+                            </button>
+                            <button onclick="toggleMode('list')" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs sm:text-sm font-medium border border-slate-700 transition-all">
+                                <i data-lucide="list" class="w-4 h-4"></i>
+                                <span>Daftar Soal Lengkap</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                btnShowAnswer.classList.add('hidden');
+                btnPrev.disabled = false;
+                btnNext.disabled = true;
+                btnNext.className = "px-5 py-2 bg-slate-700 text-slate-500 rounded-xl text-xs sm:text-sm font-semibold flex items-center space-x-1 cursor-not-allowed";
+                btnNext.innerHTML = `<span>Selesai</span><i data-lucide="check-check" class="w-4 h-4"></i>`;
+
+                lucide.createIcons();
+                return;
+            }
+
+            // REGULAR SLIDE QUESTION DISPLAY
+            btnShowAnswer.classList.remove('hidden');
+            const q = currentFilteredQuestions[currentIndex];
+
+            // Update Badges & Counters
+            document.getElementById('slide-meeting-badge').innerText = `Pertemuan ${q.meeting}`;
+            document.getElementById('slide-type-badge').innerText = q.typeName;
+            document.getElementById('current-index-text').innerText = currentIndex + 1;
+            document.getElementById('total-count-text').innerText = currentFilteredQuestions.length;
+
+            // Progress Bar
+            const progressPct = ((currentIndex + 1) / currentFilteredQuestions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progressPct}%`;
+
+            // Render Slide HTML Container
+            cardContainer.innerHTML = `
+                <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-6 sm:p-8 shadow-2xl backdrop-blur-sm min-h-[420px] flex flex-col justify-between relative slide-transition">
+                    <div>
+                        <div class="text-sm font-semibold text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                            <i data-lucide="help-circle" class="w-4 h-4 text-teal-400"></i>
+                            <span>${q.topic}</span>
+                        </div>
+                        <h2 class="text-lg sm:text-xl font-bold text-white leading-relaxed mb-6">
+                            ${q.question}
+                        </h2>
+
+                        <!-- Options Container -->
+                        <div id="slide-options" class="space-y-3"></div>
+
+                        <!-- Instant Interactive Feedback Badge -->
+                        <div id="feedback-badge" class="hidden mt-4 p-3 rounded-xl border text-xs sm:text-sm font-semibold flex items-center space-x-2 animate-fadeIn"></div>
+                    </div>
+
+                    <!-- Discussion Box -->
+                    <div class="mt-6 pt-4 border-t border-slate-700/80">
+                        <div id="answer-box" class="hidden bg-slate-900/90 border border-emerald-500/40 rounded-xl p-4 text-sm text-slate-200 mb-2 animate-fadeIn">
+                            <div class="flex items-center space-x-2 font-bold text-emerald-400 mb-1">
+                                <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+                                <span>Kunci Jawaban & Pembahasan:</span>
+                            </div>
+                            <p id="answer-text" class="text-emerald-200 font-semibold mb-2"></p>
+                            <p id="discussion-text" class="text-slate-300 leading-relaxed text-xs sm:text-sm"></p>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Options Container
+            const optionsContainer = document.getElementById('slide-options');
+            const feedbackBadge = document.getElementById('feedback-badge');
+            optionsContainer.innerHTML = '';
+
+            // User's answer for this question
+            const userAnswer = userAnswers[q.id];
+
+            if (q.type === 'pg') {
+                const correctLetter = q.correct.trim();
+
+                q.options.forEach((opt, idx) => {
+                    const optLetter = opt.trim().charAt(0);
+                    const isCorrectOpt = optLetter === correctLetter;
+                    const isSelected = userAnswer === idx;
+
+                    const optBtn = document.createElement('div');
+                    optBtn.onclick = () => selectPGOption(q.id, idx);
+
+                    let baseClasses = "p-3.5 border rounded-xl text-sm transition-all cursor-pointer flex items-center justify-between group ";
+                    let iconHtml = `<i data-lucide="circle" class="w-4 h-4 text-slate-500 group-hover:text-teal-400"></i>`;
+
+                    if (userAnswer !== undefined) {
+                        if (isCorrectOpt) {
+                            baseClasses += "bg-emerald-950/60 border-emerald-500 text-emerald-200 font-medium shadow-md shadow-emerald-950/30";
+                            iconHtml = `<i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400"></i>`;
+                        } else if (isSelected && !isCorrectOpt) {
+                            baseClasses += "bg-rose-950/60 border-rose-500 text-rose-200 font-medium shadow-md shadow-rose-950/30";
+                            iconHtml = `<i data-lucide="x-circle" class="w-5 h-5 text-rose-400"></i>`;
+                        } else {
+                            baseClasses += "bg-slate-900/30 border-slate-800 text-slate-500 opacity-60";
+                            iconHtml = `<i data-lucide="circle" class="w-4 h-4 text-slate-600"></i>`;
+                        }
+                    } else {
+                        baseClasses += "bg-slate-900/60 border-slate-700/80 hover:border-teal-500/50 hover:bg-slate-800/80 text-slate-200";
+                    }
+
+                    optBtn.className = baseClasses;
+                    optBtn.innerHTML = `<span>${opt}</span>${iconHtml}`;
+                    optionsContainer.appendChild(optBtn);
+                });
+
+                // Display Feedback Badge if answered
+                if (userAnswer !== undefined) {
+                    const selectedOptLetter = q.options[userAnswer].trim().charAt(0);
+                    const isCorrect = selectedOptLetter === correctLetter;
+                    feedbackBadge.classList.remove('hidden');
+                    if (isCorrect) {
+                        feedbackBadge.className = "mt-4 p-3 rounded-xl border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 text-xs sm:text-sm font-semibold flex items-center space-x-2";
+                        feedbackBadge.innerHTML = `<i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i><span>Jawaban Anda Benar! (${correctLetter})</span>`;
+                    } else {
+                        feedbackBadge.className = "mt-4 p-3 rounded-xl border border-rose-500/40 bg-rose-500/10 text-rose-300 text-xs sm:text-sm font-semibold flex items-center space-x-2";
+                        feedbackBadge.innerHTML = `<i data-lucide="x-circle" class="w-5 h-5 text-rose-400"></i><span>Jawaban Anda Belum Tepat. Kunci Jawaban: (${correctLetter})</span>`;
+                    }
+                }
+
+            } else if (q.type === 'pgk') {
+                const selectedArr = Array.isArray(userAnswer) ? userAnswer : [];
+                const correctIndices = q.correct;
+
+                q.options.forEach((opt, idx) => {
+                    const isSelected = selectedArr.includes(idx);
+                    const isCorrectOpt = correctIndices.includes(idx);
+
+                    const optBtn = document.createElement('div');
+                    optBtn.onclick = () => togglePGKOption(q.id, idx);
+
+                    let baseClasses = "p-3.5 border rounded-xl text-sm transition-all cursor-pointer flex items-start space-x-3 ";
+                    let checkboxIcon = isSelected 
+                        ? `<i data-lucide="check-square" class="w-4 h-4 text-teal-400"></i>`
+                        : `<i data-lucide="square" class="w-4 h-4 text-slate-500"></i>`;
+
+                    if (isAnswerVisible) {
+                        if (isCorrectOpt) {
+                            baseClasses += "bg-emerald-950/60 border-emerald-500 text-emerald-200 font-medium";
+                            checkboxIcon = `<i data-lucide="check-square" class="w-4 h-4 text-emerald-400"></i>`;
+                        } else if (isSelected && !isCorrectOpt) {
+                            baseClasses += "bg-rose-950/60 border-rose-500 text-rose-200 font-medium";
+                            checkboxIcon = `<i data-lucide="x-square" class="w-4 h-4 text-rose-400"></i>`;
+                        } else {
+                            baseClasses += "bg-slate-900/30 border-slate-800 text-slate-500 opacity-60";
+                        }
+                    } else {
+                        if (isSelected) {
+                            baseClasses += "bg-teal-950/50 border-teal-500/80 text-teal-200 font-medium";
+                        } else {
+                            baseClasses += "bg-slate-900/60 border-slate-700/80 hover:border-teal-500/50 text-slate-200";
+                        }
+                    }
+
+                    optBtn.className = baseClasses;
+                    optBtn.innerHTML = `
+                        <div class="mt-0.5 flex items-center justify-center">
+                            ${checkboxIcon}
+                        </div>
+                        <span class="flex-1">${opt}</span>
+                    `;
+                    optionsContainer.appendChild(optBtn);
+                });
+
+                if (selectedArr.length > 0 && !isAnswerVisible) {
+                    feedbackBadge.classList.remove('hidden');
+                    feedbackBadge.className = "mt-4 p-3 rounded-xl border border-teal-500/40 bg-teal-500/10 text-teal-300 text-xs sm:text-sm font-semibold flex items-center justify-between";
+                    feedbackBadge.innerHTML = `
+                        <div class="flex items-center space-x-2">
+                            <i data-lucide="info" class="w-4 h-4 text-teal-400"></i>
+                            <span>${selectedArr.length} pilihan terpilih.</span>
+                        </div>
+                        <button onclick="toggleAnswer()" class="text-xs text-teal-200 underline hover:text-white">Periksa Jawaban</button>
+                    `;
+                }
+
+            } else if (q.type === 'bs') {
+                const btnContainer = document.createElement('div');
+                btnContainer.className = "grid grid-cols-2 gap-4 mt-2";
+
+                const isBenarSelected = userAnswer === "BENAR";
+                const isSalahSelected = userAnswer === "SALAH";
+                const isCorrect = userAnswer === q.correct;
+
+                let benarClass = "p-4 bg-slate-900/60 border border-slate-700/80 hover:border-emerald-500/50 rounded-xl text-center text-emerald-400 font-bold tracking-wide transition-all cursor-pointer";
+                let salahClass = "p-4 bg-slate-900/60 border border-slate-700/80 hover:border-rose-500/50 rounded-xl text-center text-rose-400 font-bold tracking-wide transition-all cursor-pointer";
+
+                if (userAnswer !== undefined) {
+                    if (q.correct === "BENAR") {
+                        benarClass = "p-4 bg-emerald-950/80 border-2 border-emerald-500 rounded-xl text-center text-emerald-200 font-bold tracking-wide shadow-lg shadow-emerald-950/50";
+                        salahClass = isSalahSelected ? "p-4 bg-rose-950/80 border-2 border-rose-500 rounded-xl text-center text-rose-200 font-bold tracking-wide opacity-80" : "p-4 bg-slate-900/30 border border-slate-800 rounded-xl text-center text-slate-600 font-bold opacity-50";
+                    } else {
+                        salahClass = "p-4 bg-emerald-950/80 border-2 border-emerald-500 rounded-xl text-center text-emerald-200 font-bold tracking-wide shadow-lg shadow-emerald-950/50";
+                        benarClass = isBenarSelected ? "p-4 bg-rose-950/80 border-2 border-rose-500 rounded-xl text-center text-rose-200 font-bold tracking-wide opacity-80" : "p-4 bg-slate-900/30 border border-slate-800 rounded-xl text-center text-slate-600 font-bold opacity-50";
+                    }
+                }
+
+                btnContainer.innerHTML = `
+                    <div onclick="selectBSOption(${q.id}, 'BENAR')" class="${benarClass}">
+                        BENAR ${isBenarSelected ? (isCorrect ? '✓' : '✗') : ''}
+                    </div>
+                    <div onclick="selectBSOption(${q.id}, 'SALAH')" class="${salahClass}">
+                        SALAH ${isSalahSelected ? (isCorrect ? '✓' : '✗') : ''}
+                    </div>
+                `;
+                optionsContainer.appendChild(btnContainer);
+
+                if (userAnswer !== undefined) {
+                    feedbackBadge.classList.remove('hidden');
+                    if (isCorrect) {
+                        feedbackBadge.className = "mt-4 p-3 rounded-xl border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 text-xs sm:text-sm font-semibold flex items-center space-x-2";
+                        feedbackBadge.innerHTML = `<i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i><span>Jawaban Anda Tepat! Kunci: ${q.correct}</span>`;
+                    } else {
+                        feedbackBadge.className = "mt-4 p-3 rounded-xl border border-rose-500/40 bg-rose-500/10 text-rose-300 text-xs sm:text-sm font-semibold flex items-center space-x-2";
+                        feedbackBadge.innerHTML = `<i data-lucide="x-circle" class="w-5 h-5 text-rose-400"></i><span>Jawaban Anda Belum Tepat. Kunci: ${q.correct}</span>`;
+                    }
+                }
+            }
+
+            // Hide Answer Box by Default unless toggled
+            if (!isAnswerVisible) {
+                document.getElementById('answer-box').classList.add('hidden');
+                btnShowAnswer.innerHTML = `
+                    <i data-lucide="eye" class="w-4 h-4"></i>
+                    <span>Tampilkan Kunci & Pembahasan</span>
+                `;
+            } else {
+                let ansText = "";
+                if (q.type === 'pg') {
+                    ansText = `Jawaban: ${q.correct}`;
+                } else if (q.type === 'pgk') {
+                    const correctOpts = q.correct.map(i => `• ${q.options[i]}`).join('<br>');
+                    ansText = `Opsi Benar:<br>${correctOpts}`;
+                } else if (q.type === 'bs') {
+                    ansText = `Kunci: ${q.correct}`;
+                }
+
+                document.getElementById('answer-text').innerHTML = ansText;
+                document.getElementById('discussion-text').innerText = q.discussion;
+                document.getElementById('answer-box').classList.remove('hidden');
+
+                btnShowAnswer.innerHTML = `
+                    <i data-lucide="eye-off" class="w-4 h-4"></i>
+                    <span>Sembunyikan Pembahasan</span>
+                `;
+            }
+
+            // Navigation Buttons
+            btnPrev.disabled = currentIndex === 0;
+
+            if (currentIndex === currentFilteredQuestions.length - 1) {
+                btnNext.disabled = false;
+                btnNext.className = "px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs sm:text-sm font-semibold flex items-center space-x-1 shadow-lg shadow-emerald-900/50 transition-all";
+                btnNext.innerHTML = `<span>Selesai & Lihat Skor</span><i data-lucide="award" class="w-4 h-4"></i>`;
+            } else {
+                btnNext.disabled = false;
+                btnNext.className = "px-5 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-xl text-xs sm:text-sm font-semibold flex items-center space-x-1 shadow-lg shadow-teal-900/50 transition-all";
+                btnNext.innerHTML = `<span>Selanjutnya</span><i data-lucide="chevron-right" class="w-4 h-4"></i>`;
+            }
+
+            lucide.createIcons();
+        }
+
+        // Toggle Answer & Pembahasan
+        function toggleAnswer() {
+            isAnswerVisible = !isAnswerVisible;
+            renderSlide();
+        }
+
+        function nextSlide() {
+            if (currentIndex <= currentFilteredQuestions.length - 1) {
+                currentIndex++;
+                isAnswerVisible = false;
+                renderSlide();
+            }
+        }
+
+        function prevSlide() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                isAnswerVisible = false;
+                renderSlide();
+            }
+        }
+
+        // Render List View
+        function renderListQuestions() {
+            const container = document.getElementById('list-questions-container');
+            container.innerHTML = '';
+
+            currentFilteredQuestions.forEach((q, idx) => {
+                const card = document.createElement('div');
+                card.className = "bg-slate-800/80 border border-slate-700 rounded-2xl p-6 space-y-4";
+
+                let optionsHTML = '';
+                if (q.type === 'pg') {
+                    optionsHTML = q.options.map((opt, i) => {
+                        const isSelected = userAnswers[q.id] === i;
+                        return `<div onclick="selectPGOption(${q.id}, ${i})" class="p-2.5 bg-slate-900/50 hover:bg-slate-800 rounded-lg text-xs text-slate-300 border ${isSelected ? 'border-teal-500 bg-teal-950/40 text-teal-200 font-medium' : 'border-slate-700/50'} cursor-pointer flex justify-between items-center transition-all">
+                            <span>${opt}</span>
+                            ${isSelected ? '<i data-lucide="check-circle-2" class="w-4 h-4 text-teal-400"></i>' : ''}
+                        </div>`;
+                    }).join('');
+                } else if (q.type === 'pgk') {
+                    optionsHTML = q.options.map((opt, i) => {
+                        const isSelected = Array.isArray(userAnswers[q.id]) && userAnswers[q.id].includes(i);
+                        return `<div onclick="togglePGKOption(${q.id}, ${i})" class="p-2.5 bg-slate-900/50 hover:bg-slate-800 rounded-lg text-xs text-slate-300 border ${isSelected ? 'border-teal-500 bg-teal-950/40 text-teal-200 font-medium' : 'border-slate-700/50'} cursor-pointer flex justify-between items-center transition-all">
+                            <span>${opt}</span>
+                            ${isSelected ? '<i data-lucide="check-square" class="w-4 h-4 text-teal-400"></i>' : '<i data-lucide="square" class="w-4 h-4 text-slate-500"></i>'}
+                        </div>`;
+                    }).join('');
+                } else {
+                    const isBenar = userAnswers[q.id] === "BENAR";
+                    const isSalah = userAnswers[q.id] === "SALAH";
+                    optionsHTML = `
+                        <div class="flex gap-3 text-xs font-bold">
+                            <button onclick="selectBSOption(${q.id}, 'BENAR')" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 rounded-lg border ${isBenar ? 'border-emerald-500 bg-emerald-950/50 text-emerald-300' : 'border-slate-700 text-emerald-400'} transition-all">
+                                BENAR ${isBenar ? '✓' : ''}
+                            </button>
+                            <button onclick="selectBSOption(${q.id}, 'SALAH')" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 rounded-lg border ${isSalah ? 'border-rose-500 bg-rose-950/50 text-rose-300' : 'border-slate-700 text-rose-400'} transition-all">
+                                SALAH ${isSalah ? '✓' : ''}
+                            </button>
+                        </div>`;
+                }
+
+                let correctText = "";
+                if (q.type === 'pg') correctText = q.correct;
+                else if (q.type === 'pgk') correctText = q.correct.map(i => `[Opsi ${i+1}]`).join(', ');
+                else correctText = q.correct;
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <span class="px-2.5 py-1 bg-teal-500/20 text-teal-300 border border-teal-500/30 rounded-full text-xs font-semibold">
+                                Soal ${idx + 1}
+                            </span>
+                            <span class="px-2.5 py-1 bg-slate-700 text-slate-300 rounded-full text-xs font-medium">
+                                Pertemuan ${q.meeting}
+                            </span>
+                            <span class="px-2.5 py-1 bg-blue-500/20 text-blue-300 border border-blue-500/30 rounded-full text-xs font-medium">
+                                ${q.typeName}
+                            </span>
+                        </div>
+                    </div>
+
+                    <p class="text-sm sm:text-base font-semibold text-white leading-relaxed">
+                        ${q.question}
+                    </p>
+
+                    <div class="space-y-2">
+                        ${optionsHTML}
+                    </div>
+
+                    <div class="pt-3 border-t border-slate-700/60 bg-slate-900/40 p-3 rounded-xl border border-emerald-500/30">
+                        <div class="text-xs font-bold text-emerald-400 mb-1">
+                            Kunci Jawaban: <span class="text-white">${correctText}</span>
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            ${q.discussion}
+                        </p>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+
+            lucide.createIcons();
+        }
+
+        // Handler Klik Pilihan Jawaban User
+        function selectPGOption(qId, idx) {
+            userAnswers[qId] = idx;
+            renderSlide();
+            if (!document.getElementById('list-mode').classList.contains('hidden')) {
+                renderListQuestions();
+            }
+        }
+
+        function togglePGKOption(qId, idx) {
+            if (!userAnswers[qId] || !Array.isArray(userAnswers[qId])) {
+                userAnswers[qId] = [];
+            }
+            const pos = userAnswers[qId].indexOf(idx);
+            if (pos > -1) {
+                userAnswers[qId].splice(pos, 1);
+            } else {
+                userAnswers[qId].push(idx);
+            }
+            renderSlide();
+            if (!document.getElementById('list-mode').classList.contains('hidden')) {
+                renderListQuestions();
+            }
+        }
+
+        function selectBSOption(qId, val) {
+            userAnswers[qId] = val;
+            renderSlide();
+            if (!document.getElementById('list-mode').classList.contains('hidden')) {
+                renderListQuestions();
+            }
+        }
+
+        // Filter Pertemuan
+        function filterMeeting(meeting) {
+            activeMeetingFilter = meeting;
+            ['all', 1, 2, 3].forEach(m => {
+                const btn = document.getElementById(`btn-m-${m}`);
+                if (btn) {
+                    if (m === meeting) {
+                        btn.className = "px-3 py-1.5 text-xs font-semibold rounded-lg transition-all bg-teal-600 text-white shadow-sm";
+                    } else {
+                        btn.className = "px-3 py-1.5 text-xs font-semibold text-slate-300 hover:text-white rounded-lg transition-all";
+                    }
+                }
+            });
+
+            if (meeting === 'all') {
+                currentFilteredQuestions = [...questionsData];
+            } else {
+                currentFilteredQuestions = questionsData.filter(q => q.meeting === parseInt(meeting));
+            }
+            currentIndex = 0;
+            isAnswerVisible = false;
+            renderSlide();
+            if (!document.getElementById('list-mode').classList.contains('hidden')) {
+                renderListQuestions();
+            }
+        }
+
+        // Switch View Mode (Slide vs List)
+        function toggleMode(mode) {
+            const slideMode = document.getElementById('slide-mode');
+            const listMode = document.getElementById('list-mode');
+            const slideBtn = document.getElementById('mode-slide-btn');
+            const listBtn = document.getElementById('mode-list-btn');
+
+            if (mode === 'slide') {
+                slideMode.classList.remove('hidden');
+                listMode.classList.add('hidden');
+                slideBtn.className = "flex items-center space-x-2 px-3 py-1.5 text-xs font-medium bg-slate-700 text-teal-300 rounded-lg border border-teal-500/30";
+                listBtn.className = "flex items-center space-x-2 px-3 py-1.5 text-xs font-medium text-slate-400 hover:text-white rounded-lg";
+                renderSlide();
+            } else {
+                slideMode.classList.add('hidden');
+                listMode.classList.remove('hidden');
+                listBtn.className = "flex items-center space-x-2 px-3 py-1.5 text-xs font-medium bg-slate-700 text-teal-300 rounded-lg border border-teal-500/30";
+                slideBtn.className = "flex items-center space-x-2 px-3 py-1.5 text-xs font-medium text-slate-400 hover:text-white rounded-lg";
+                renderListQuestions();
+            }
+        }
+
+        // Navigasi Keyboard Panah Kiri / Kanan
+        document.addEventListener('keydown', (e) => {
+            const slideMode = document.getElementById('slide-mode');
+            if (slideMode && !slideMode.classList.contains('hidden')) {
+                if (e.key === 'ArrowRight') {
+                    nextSlide();
+                } else if (e.key === 'ArrowLeft') {
+                    prevSlide();
+                }
+            }
+        });
+
+        // Inisialisasi Aplikasi Saat Dimuat
+        window.onload = function() {
+            renderSlide();
+        };
+    </script>
+</body>
+</html>
